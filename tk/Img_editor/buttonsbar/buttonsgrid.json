@@ -1,0 +1,95 @@
+[{
+        "image": "icons\\mask.png",
+        "order": "define_mask"
+    },
+    {
+        "image": "icons\\box_mode.png",
+        "order": [{
+                "image": "icons\\selection.png",
+                "order": "make_box"
+            },
+            {
+                "image": "icons\\control_box.png",
+                "order": "control_moving_box"
+            }
+        ]
+    },
+    {
+        "image": "icons\\editing.png",
+        "order": [{
+                "image": "icons\\wrap_image.png",
+                "order": "make_wrapped_image"
+            },
+            {
+                "image": "icons\\move_selectedmask.png",
+                "order": "open_image_background"
+            },
+            {
+                "image": "icons\\coloring_mode.png",
+                "order": "coloring_mode"
+            },
+            {
+                "image":"icons\\scale_image_noborder.png",
+                "order":"add_edges_blankedges"
+            },{
+                "image":"icons\\scale_add_border.png",
+                "order":"add_edges"
+            }
+        ]
+    }, {
+        "image": "icons\\editing.png",
+        "order": [{
+                "image": "icons\\crop.png",
+                "order": "crop_image"
+            },
+            {
+                "image": "icons\\paint-board-and-brush.png",
+                "order": "add_color_back_ground"
+            },
+            {
+                "image": "icons\\paint tool.png",
+                "order": "in_paint_image"
+            },
+            {
+                "image": "icons\\remove_background.png",
+                "order": "remove_img_back_ground"
+            },
+
+            {
+                "image": "icons\\finisish_add_back_ground.png",
+                "order": "finish_addbackGround"
+            }
+        ]
+    },
+    {
+        "image": "icons\\filter.png",
+        "order": [{
+            "image": "icons\\blur.png",
+            "order": "bluredimg"
+        }]
+    }, {
+        "image": "icons\\move_selectedmask.png",
+        "order": [{
+                "image": "icons\\move.png",
+                "order": "move_text"
+            },
+            {
+                "image": "icons\\move_copy_rotate.png",
+                "order": "move_rotate_copy"
+            },
+            {
+                "image": "icons\\rotate_selected_area.png",
+                "order": "get_all_rotate_boxs"
+            }
+        ]
+    },
+    
+    {
+        "image": "icons\\rotating-arrow-symbol.png",
+        "order": "rotate_img"
+    },
+    {
+        "image": "icons\\download-button.png",
+        "order": "save_imgcv"
+    }
+]

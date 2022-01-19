@@ -1,0 +1,15 @@
+{
+    "button_sidebar": {
+        "font": "microsoft 16",
+        "fg": "White",
+        "bg": "red",
+        "activeforeground": "white",
+        "activebackground": "#333333",
+        "bd": 0
+    },
+    "button_sidebar.grid": {
+        "pady": 0,
+        "padx": 1,
+        "sticky": "nswe"
+    }
+}

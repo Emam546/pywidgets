@@ -1,0 +1,12 @@
+{
+    "tiltebar": {
+        "self": {
+            "bg": "black",
+            "bd": 0
+        },
+        "label": {
+            "fg": "white",
+            "font": "microsoft 15"
+        }
+    }
+}

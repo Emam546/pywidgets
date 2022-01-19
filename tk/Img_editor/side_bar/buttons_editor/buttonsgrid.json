@@ -1,0 +1,20 @@
+[{
+        "image": "icons\\betwise.png",
+        "order": "betwise_image"
+    },
+    {
+        "image": "icons\\reset_box.png",
+        "order": "reset_box"
+    },
+    {
+        "image": "icons\\make_box_thresh.png",
+        "order": "make_box_thresh"
+    },
+    {
+        "image": "icons\\clear_mask.png",
+        "order": "clear_mask"
+    }, {
+        "image": "icons\\fill_spaces_area.png",
+        "order": "fill_mask_spaces"
+    }
+]

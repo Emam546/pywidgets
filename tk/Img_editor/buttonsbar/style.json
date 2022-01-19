@@ -1,0 +1,14 @@
+{
+    "font": "microsoft 16",
+    "fg": "White",
+    "bg": "red",
+    "activeforeground": "white",
+    "activebackground": "red",
+    "bd": 0,
+    "grid": {
+        "pady": 0,
+        "padx": 1,
+        "column": 0,
+        "sticky": "nswe"
+    }
+}
