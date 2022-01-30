@@ -1,15 +1,13 @@
-import os
-import sys
-from pathlib import Path
-sys.path.append(os.path.dirname(Path(__file__).parent))
-from side_bar.slider import *
 from tkinter import *
-from pycv2.img.utils import rgb_to_hex
+import numpy as np
+import cv2
+from pywidgets.tk.Img_editor.side_bar.slider import *
+
 def _donothing(*args,**kwargs):pass
 
-class Frame_erode(Slider_1):
+class Frame_erode(Slider_1_Reset):
     def __init__(self,app,mask,target,range=(1,30),**kwargs):
-        super().__init__(app,range,**kwargs)
+        super().__init__(app,1,range,**kwargs)
         self.mask=mask
         self.target=target
         self.var.trace_add("write",lambda f,s,t:self._minmizer())
@@ -22,9 +20,9 @@ class Frame_erode(Slider_1):
         self.target(result)
         self.mask=mask.copy()
         
-class Frame_dilite(Slider_1):
+class Frame_dilite(Slider_1_Reset):
     def __init__(self,app,mask,target,range=(1,30),**kwargs):
-        super().__init__(app,range,**kwargs)
+        super().__init__(app,1,range,**kwargs)
         self.mask=mask
         self.target=target
         self.var.trace_add("write",lambda f,s,t:self._minmizer())
@@ -37,9 +35,9 @@ class Frame_dilite(Slider_1):
         self.target(result)
         self.mask=mask.copy()
      
-class Frame_Close(Slider_1):
+class Frame_Close(Slider_1_Reset):
     def __init__(self,app,mask,target,range=(1,30),**kwargs):
-        super().__init__(app,range,**kwargs)
+        super().__init__(app,1,range,**kwargs)
         self.mask=mask
         self.target=target
         
@@ -53,9 +51,9 @@ class Frame_Close(Slider_1):
         self.target(morph)
         self.mask=mask.copy()
         
-class Frame_Open(Slider_1):
+class Frame_Open(Slider_1_Reset):
     def __init__(self,app,mask,target,range:tuple=(1,30),**kwargs):
-        super().__init__(app,range,**kwargs)
+        super().__init__(app,1,range,**kwargs)
         self.mask=mask
         self.target=target
         self.var.trace_add("write",lambda f,s,t:self._minmizer())

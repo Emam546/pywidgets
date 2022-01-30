@@ -38,6 +38,7 @@ class Box_color_tracker(Frame):
             self.showing_label.config(text=cnf["text"])
             cnf.pop("text")
         super().configure(*cnf) 
+
 class BOXS_COLOR(Frame):
     def __init__(self,app=None,rows=10,columns=3,defult_colors=DEFULT_COLORS,**Kwargs):
         super().__init__(self,**Kwargs)

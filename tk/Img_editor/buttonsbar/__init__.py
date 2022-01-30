@@ -1,11 +1,8 @@
 from functools import partial
-import os,sys
-from pathlib import Path
-sys.path.append(os.path.dirname(Path(__file__).parent))
+import os
 import json
 from tkinter import *
 from PIL import Image,ImageTk
-
 __FilePATH=os.path.dirname(__file__)
 CANCEL_BUTTON_COFIGURATIONS=[
     {

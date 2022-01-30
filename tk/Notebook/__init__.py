@@ -1,12 +1,9 @@
-from logging import root
 from tkinter import *
 from functools import partial
-import sys,os
-sys.path.append(os.path.dirname(__file__))
-from note_origin import Swithcher_window
-from title_frame import Title,Title_Frame_container
-from style import *
-from func import bind_all_childes
+from pywidgets.tk.Notebook.note_origin import Swithcher_window
+from pywidgets.tk.Notebook.title_frame import Title,Title_Frame_container
+from pywidgets.tk.Notebook.style import *
+from pywidgets.tk.func import bind_all_childes
 def clone(widget:Widget,parent:Widget,**kwrgs):
         clone = widget.__class__(parent,**kwrgs)
         for key in widget.keys():

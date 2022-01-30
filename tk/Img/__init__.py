@@ -1,8 +1,5 @@
-import os
-import sys
-sys.path.append(os.path.dirname(__file__))
-from  __orign import *
-from __Img_viewers import *
+from  pywidgets.tk.Img.__orign import *
+from pywidgets.tk.Img.__Img_viewers import *
 
 
 def main():

@@ -3,8 +3,7 @@ from PIL import Image,ImageTk
 from pycv2.img.utils import newbox
 import cv2,numpy as np
 import json
-import os,sys
-sys.path.append(os.path.dirname(__file__))
+import os
 __FilePATH=os.path.dirname(__file__)
 file=open(__FilePATH+"\\buttonsgrid.json","r")
 BUTTON_COFIGURATION=json.load(file)

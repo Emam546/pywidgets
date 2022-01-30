@@ -2,16 +2,15 @@ from pathlib import Path
 from tkinter import *
 import os,sys
 import ntpath
-sys.path.append(os.path.dirname(__file__))
-sys.path.append(os.path.dirname(Path(__file__).parent))
-from func import bind_all_childes
-from __origen import _EXPLORE
-from Verticle_Frame import VerticalScrolledFrame
+
+from pywidgets.tk.func import bind_all_childes
+from pywidgets.tk.Lables.__origen import _EXPLORE
+from pywidgets.tk.Verticle_Frame import VerticalScrolledFrame
 from PIL import ImageTk,Image
 
-FILE_PATH=os.path.dirname(__file__)+"\\"
-RIGHTARROW=Image.open(FILE_PATH+"icons\\go_right.png")
-DOWNARROW=Image.open(FILE_PATH+"icons\\down-arrow2.png")
+FILE_PATH=os.path.dirname(__file__)
+RIGHTARROW=Image.open(os.path.join(FILE_PATH,"icons\\go_right.png"))
+DOWNARROW=Image.open(os.path.join(FILE_PATH,"icons\\down-arrow2.png"))
 
 class Explorer(_EXPLORE,VerticalScrolledFrame):
     def __init__(self, app, scrolling=False, *args, **kw):

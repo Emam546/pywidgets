@@ -1,7 +1,4 @@
-
 from tkinter import *
-
-
 class _EXPLORE(Frame,list):
     def __init__(self, app,  *args, **kw):
         super().__init__(app, *args, **kw)

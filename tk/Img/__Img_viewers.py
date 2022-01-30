@@ -1,8 +1,6 @@
 import cv2,os
-import os
-import sys
-sys.path.append(os.path.dirname(__file__))
-from __orign import *
+
+from pywidgets.tk.Img.__orign import *
 from pycv2.img.utils import *
 from pycv2.img.drawing.box import *
 def donothing(*args,**kwrgs):pass

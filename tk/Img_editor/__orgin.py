@@ -1,16 +1,17 @@
 import inspect
-import os
-import sys
+
 from pathlib import Path
-sys.path.append(os.path.dirname(__file__))
-sys.path.append(os.path.dirname(Path(__file__).parent))
-from Notebook import CusNotebook
 from tkinter import *
+from pywidgets.tk.Notebook import CusNotebook
 import numpy as np
 from pycv2.img.utils import *
 from tkinter import filedialog
 from pykeyboard import keyboard
 from pykeyboard.keys import ENTER
+ALL_EXTENSIONS=(
+    ("ALL","*.*"),("PNG","*.png"),("JPEG",".jpg *.jpeg *.jp2"),("WEB","*.web"),
+    ("Portable image","*.pbm *.pgm *.ppm *.pxm *.pnm"),("Windows bitmaps","*.bmp *.dib")
+)
 def INR(funct,*args,**kwargs):
     func_args = inspect.getargspec(funct).args
     the_dic={}
@@ -50,7 +51,13 @@ class Img_cv():
     
     def clamp_point(self,pt):
         return clamp_point(pt,self.imgcv)
-     
+    def save_imgcv(self,**kwargs):
+        filename=filedialog.asksaveasfilename(
+            filetypes=ALL_EXTENSIONS,**kwargs
+        )
+        if filename!="":
+            cv2.imwrite(filename,self.imgcv)
+    
 class Img_editor(Frame,Img_cv):
     def __init__(self,app,imgcv,mask=None,box=None,**kwargs):
         dicttion={}
@@ -87,8 +94,6 @@ class Img_editor(Frame,Img_cv):
     
     def entered(self, target):
         self.endtarget=target
- 
-
         if keyboard.checknow(ENTER):
             self.winfo_toplevel().bind_all("<KeyRelease-Return>",
                                     lambda e: self.winfo_toplevel().bind_all("<Return>", self._end_target))
@@ -101,10 +106,7 @@ class Img_editor(Frame,Img_cv):
         self.unbind_all("<Return>")
         self.unbind_all("<KeyRelease-Return>")
         
-ALL_EXTENSIONS=(
-    ("ALL","*.*"),("PNG","*.png"),("JPEG",".jpg *.jpeg *.jp2"),("WEB","*.web"),
-    ("Portable image","*.pbm *.pgm *.ppm *.pxm *.pnm"),("Windows bitmaps","*.bmp *.dib")
-)
+
 EXTENSIONS=[exten.split(".")[1] for _,root in ALL_EXTENSIONS for exten in root.split(" ")]
 class EMViwerer(Img_editor):
     def __init__(self, app, imgcv, mask=None, box=None, **kwargs):
@@ -129,12 +131,6 @@ class EMViwerer(Img_editor):
                 bindings=list(title.widget.canvas.bind())
                 for binding in bindings:
                     title.widget.canvas.unbind(binding)
-    def save_imgcv(self,**kwargs):
-        filename=filedialog.asksaveasfilename(
-            filetypes=ALL_EXTENSIONS,**kwargs
-        )
-        if filename!="":
-            cv2.imwrite(filename,self.imgcv)
 
         
     

@@ -1,6 +1,4 @@
-import sys,os
-sys.path.append(os.path.dirname(__file__))
-from origin import *
+from pywidgets._functions.origin import *
 from pycv2.img.drawing.box import draw_box_moving, drawbox
 COLOR_CIRCLES=np.zeros((4,3),np.int)
 COLOR_CIRCLES[:,2]=255

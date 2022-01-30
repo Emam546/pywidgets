@@ -1,12 +1,8 @@
-import os 
-import sys
-sys.path.append(os.path.dirname(__file__))
-from pathlib import Path
-sys.path.append(os.path.dirname(Path(__file__).parent))
-from Img.__Img_viewers import *
-from __orgin import *
-from Image_objects import *
 from tkinter import filedialog
+from pywidgets.tk.Img.__Img_viewers import *
+from pywidgets.tk.Img_editor.__orgin import *
+from pywidgets.tk.Img_editor.Image_objects import *
+
 class Viewer(EMViwerer):
     def __init__(self,app, imgcv, mask=None, box=None, **kwargs):
         super().__init__(app=app, imgcv=imgcv, mask=mask, box=box, **kwargs)

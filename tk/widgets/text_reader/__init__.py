@@ -9,9 +9,9 @@ from langdetect import detect
 import os
 import sys
 from pathlib import Path
-sys.path.append(os.path.dirname(__file__))
-__FILEPATH=os.path.dirname(__file__)+"\\"
-PHOTO = Image.open(__FILEPATH+"icons\\icon.png")
+
+__FILEPATH=os.path.dirname(__file__)
+PHOTO = Image.open(os.path.join(__FILEPATH,"icons\\icon.png"))
 class Frame_text_area(Frame):
         def __init__(self,app,*args, **kwargs):
             super().__init__(app, *args, **kwargs)

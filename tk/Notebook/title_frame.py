@@ -1,11 +1,6 @@
 from tkinter import *
-import os,sys
-from pathlib import Path
-from turtle import title
-from style import STYLE_TITLE
-_pathparent=os.path.dirname(Path(__file__).parent)
-sys.path.append(_pathparent)
-from func import bind_all_childes
+from pywidgets.tk.Notebook.style import STYLE_TITLE
+from pywidgets.tk.func import bind_all_childes
 class Title(Frame):
     def __init__(self,app,title:str,delet_state=False,
         style:dict=STYLE_TITLE,destyle:dict=STYLE_TITLE,hover_style={},def_hoversetyle={},

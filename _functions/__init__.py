@@ -1,8 +1,7 @@
 import sys,os
-sys.path.append(os.path.dirname(__file__))
-from brushing import *
-from selecting import *
-from moving import *
+from pywidgets._functions.brushing import *
+from pywidgets._functions.selecting import *
+from pywidgets._functions.moving import *
 import cv2
 class Cut_Brushing_Reseizing(Select_box_circels,Brusher_Use):
     def __init__(self,box,target,mask,radius_brushing=10,radius_selcting=10,centerstate=False):

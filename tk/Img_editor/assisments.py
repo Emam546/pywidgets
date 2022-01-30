@@ -1,8 +1,4 @@
-import sys,os
-from pathlib import Path
-__file=Path(Path(__file__).parent).parent
-sys.path.append(os.path.dirname(__file))
-from _functions import *
+from pywidgets._functions import *
 from tkinter import Canvas
 class Select_box(Select_box):
     def bind(self,canvas:Canvas,pos=(0,0)):
@@ -71,8 +67,8 @@ class Adding_edges_background(Adding_edges_background):
 class Brusher_Use(Brusher_Use):
     def bind(self,canvas:Canvas,pos):
         def correct(event,state):
-            pos = int(event.widget.canvasx(event.x))+pos[0],int(event.widget.canvasy(event.y))+pos[1]
-            self.motion(pos,state)
+            x,y = int(event.widget.canvasx(event.x))+pos[0],int(event.widget.canvasy(event.y))+pos[1]
+            self.motion((x,y),state)
         canvas.bind("<Button-1>",lambda e:correct(e,True))
         canvas.bind("<B1-Motion>",lambda e:correct(e,True))
         canvas.bind("<Button-3>",lambda e:correct(e,False))

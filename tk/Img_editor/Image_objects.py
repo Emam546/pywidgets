@@ -1,7 +1,5 @@
-import os
-import sys
-sys.path.append(os.path.dirname(__file__))
-from __orgin import *
+from tkinter import messagebox
+from pywidgets.tk.Img_editor.__orgin import *
 CRITERIA = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
 class Cluster_Imgcv(Img_cv):
     def __init__(self, imgcv, mask=None, box=None,kmeans=7):
@@ -76,7 +74,22 @@ class Background_Img_cv(Img_cv):
         return val
     def clamp_box(self,box):
         return EMViwerer.clamp_box(self,box)
-        
+    def get_imgbackground_file(self,**kwargs):
+        filename=filedialog.asksaveasfilename(
+            filetypes=ALL_EXTENSIONS,**kwargs
+        )
+        if filename!="":
+            try:
+                img=cv2.imread(filename,)
+                if not img  is None:
+                    #get one chanal from the image
+                    mask=img.copy()[:,:,0]
+                    mask[:]=255
+                    self.import_img_back_ground(Img_cv(img,mask))
+                else:
+                    messagebox.showerror(str("FATAL ERROR"))
+            except Exception as e:
+                messagebox.showerror(str(e))
     def corr_background(self,box,imgcv):
         b=self.clamp_box(box)
         return cv2.resize(imgcv.copy().copy(),(b[2],b[3]),cv2.INTER_AREA)
@@ -94,6 +107,7 @@ class Background_Img_cv(Img_cv):
         return background
     
     def import_img_back_ground(self,imgcv_obj:Img_cv):
+        "ADD unready image to imgbackground"
         h,w=self.imgcv.shape[:2]
         imgcv_obj["background"]=self.corr_keep([0,0,w,h],imgcv_obj["imgcv"])
         w,h=imgcv_obj["background"].shape[:2]

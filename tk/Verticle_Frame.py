@@ -1,7 +1,5 @@
 from tkinter import *
-import sys,os
-sys.path.append(os.path.dirname(__file__))
-from func import *
+from pywidgets.tk.func import *
 
 class VerticalScrolledFrame(Frame):
     def __init__(self, parent,scrolling=False, *args, **kw):
@@ -40,9 +38,9 @@ class VerticalScrolledFrame(Frame):
         # also updating the scrollbar
         
         interior.bind('<Configure>',lambda e: self._configure_interior())
-
         self.canvas.bind('<Configure>',lambda e: self._configure_canvas())
-    def _configure_canvas(self,event):
+
+    def _configure_canvas(self):
         if self._vscrollbar.winfo_exists()==FALSE:
             return
         h= self.interior.winfo_reqheight()
@@ -74,3 +72,4 @@ class VerticalScrolledFrame(Frame):
             if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
                 # update the self.canvas's width to fit the inner frame
                 self.canvas.config(width=self.interior.winfo_reqwidth())
+  

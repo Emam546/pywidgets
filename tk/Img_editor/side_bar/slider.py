@@ -1,60 +1,32 @@
-import os,sys
-sys.path.append(os.path.dirname(__file__))
 from tkinter import *
-from __orgin import Img_cv,EMViwerer
-import cv2
-import numpy as np
 SLIDER_STYLE={}
+class Scale_reset(Scale):
+    def __init__(self,app=None,defult_value=0,variable:IntVar=...,**kwargs):
+        super().__init__(app,variable=variable,**kwargs)
+        self.defult_value=defult_value
+        self.variable=None if variable==... else variable
+        def tracker_add(mode,funct):
+            def track(*args,**kwargs):
+                if self.variable.get()!=defult_value:
+                    funct(*args,**kwargs)
+            self.variable.__class__.trace_add(self.variable,mode,track)
+        if self.variable!=None:
+            self.variable.trace_add=tracker_add
+        
+        self.bind("<ButtonRelease-1>",lambda e:self.reset())
+        self.reset()
+    
+    def reset(self):
+        if self.variable is not None:
+            self.set(self.defult_value) 
+            #self.variable.set(self.defult_value)
+        else:
+            self.set(self.defult_value) 
+
+    
 class Side_bar(Frame):
     def __init__(self,app=None,**kwargs):
         super().__init__(app,**kwargs)
-class MaskEditors(EMViwerer):
-    def __applymask(self,mask):
-        if mask.shape==self.mask.shape:
-            b=self.box
-            self.mask[b[1]:b[1]+b[3],b[0],b[0]+b[2]]=mask[b[1]:b[1]+b[3],b[0],b[0]+b[2]]
-            self.show_viwers()
-        else:
-            raise "the mask is not the same shape"
-    def erode(self,number):
-        kernel=np.ones((number,number))
-        mask=cv2.erode(self.mask.copy(),kernel)
-        return self.__applymask(mask)
-    def dilate(self,number):
-        kernel=np.ones((number,number))
-        mask=cv2.dilate(self.mask.copy(),kernel)
-        return self.__applymask(mask)
-    def close_mask(self,num):
-        kernel=np.ones((num,num))
-        mask = cv2.morphologyEx(self.mask.copy(), cv2.MORPH_CLOSE, kernel)
-        return self.__applymask(mask)
-    def open_mask(self,num):
-        kernel=np.ones((num,num))
-        mask = cv2.morphologyEx(self.mask.copy(), cv2.MORPH_OPEN,kernel)
-        return self.__applymask(mask)
-    def thresh(self,thresh,maxvalue,typevar=0):
-        clone_mask=cv2.cvtColor(self.imgcv.copy(),cv2.COLOR_BGR2GRAY)
-        mask=cv2.threshold(clone_mask.copy(),thresh,maxvalue,typevar)[1]
-        return self.__applymask(mask)
-    def adaptivethresh(self,thresh,maxvalue,typevar=0):
-        clone_mask=cv2.cvtColor(self.imgcv.copy(),cv2.COLOR_BGR2GRAY)
-        mask=cv2.adaptiveThreshold(clone_mask.copy(),maxvalue,cv2.ADAPTIVE_THRESH_MEAN_C,typevar,11,thresh)
-        return self.__applymask(mask)
-    def canny_edge_detector(self,minthresh,maxtresh):
-        clone_mask=cv2.cvtColor(self.imgcv.copy(),cv2.COLOR_BGR2GRAY)
-        mask=cv2.Canny(clone_mask,minthresh,maxtresh)
-        return self.__applymask(mask)
-    def mask_creator_BGR(self,values):
-        lower = np.array(values[0], dtype = "uint8")
-        upper = np.array(values[1], dtype = "uint8")
-        mask = cv2.inRange(self.imgcv, lower, upper)
-        return self.__applymask(mask)
-    def mask_creator_hsv(self,values):
-        Hsv_image=cv2.cvtColor(self.imgcv,cv2.COLOR_BGR2HSV)
-        lower = np.array(values[0], dtype = "uint8")
-        upper = np.array(values[1], dtype = "uint8")
-        mask = cv2.inRange(Hsv_image, lower, upper)
-        return self.__applymask(mask)
 
 class Slider_1(Frame):
     def __init__(self,app=None,range:tuple=(0,100),orient=HORIZONTAL,**kwargs):
@@ -62,6 +34,13 @@ class Slider_1(Frame):
         self.range=range=dict(from_=range[0],to=range[1])
         self.var=IntVar()
         self.scale=Scale(self,variable=self.var,orient=orient,**range)
+        self.scale.pack(fill=X,expand=YES)
+class Slider_1_Reset(Frame):
+    def __init__(self,app=None,defult_number=0,range:tuple=(0,100),orient=HORIZONTAL,**kwargs):
+        super().__init__(app,**kwargs)
+        self.range=range=dict(from_=range[0],to=range[1])
+        self.var=IntVar()
+        self.scale=Scale_reset(self,defult_number,variable=self.var,orient=orient,**range)
         self.scale.pack(fill=X,expand=YES)
 class SLider_1_tracker(Slider_1):
     def __init__(self, app, target,range: tuple = (0, 100), orient=HORIZONTAL, **kwargs):
@@ -183,12 +162,20 @@ class SwithchBox(Frame):
         else:
             self.button_1.config(relief=RAISED,state=ACTIVE)
             self.button_2.config(relief=SUNKEN,state=ACTIVE)
-            
-    
+
+
 def main():
     root=Tk()
     slider=Slider_3x2(root,orient=HORIZONTAL,bg="red")
     slider.pack(fill=BOTH,expand=YES)
     root.mainloop()
+def main2():
+    root=Tk()
+    var=IntVar()
+    slider=Scale_reset(root,orient=HORIZONTAL,bg="red",variable=var)
+    var.trace_add("write",lambda *args:print(var.get()))
+  
+    slider.pack(fill=BOTH,expand=YES)
+    root.mainloop()
 if __name__=="__main__":
-    main()
+    main2()

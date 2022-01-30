@@ -1,7 +1,5 @@
 import os ,sys
-__FILE_PATH=os.path.dirname(__file__)+"\\"
-sys.path.append(__FILE_PATH)
-from color_widgets import Box_color_tracker
+from pywidgets.tk.widgets.color_picker.color_widgets import Box_color_tracker
 from tkinter import *
 from tkinter import colorchooser
 from pykeyboard import keyboards
@@ -18,7 +16,8 @@ import pyperclip as pc
 from threading import Thread
 import numpy as np
 key=keyboards()
-PHOTO = Image.open(__FILE_PATH+"icons\\copy_icon.png")
+__FILE_PATH=os.path.dirname(__file__)
+PHOTO = Image.open(os.path.join(__FILE_PATH,"icons\\copy_icon.png"))
 WIDTH=GetSystemMetrics(0)
 HEIGHT=GetSystemMetrics(1)
 def _vaildiation_digits_number(input):

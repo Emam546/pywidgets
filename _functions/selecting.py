@@ -1,6 +1,5 @@
-import sys,os
-sys.path.append(os.path.dirname(__file__))
-from origin import *
+
+from pywidgets._functions.origin import *
 class Select_box(Circles):
     def __init__(self, circles,target,radius_selcting=10,centerstate=True):
         super().__init__(circles,centerstate)           

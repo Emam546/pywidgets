@@ -1,11 +1,12 @@
-import os,sys
-sys.path.append(os.path.dirname(__file__))
-from assisments import *
-from __viewers import *
-from __orgin import *
+from pywidgets.tk.Img_editor.assisments import *
+from pywidgets.tk.Img_editor.__viewers import *
+from pywidgets.tk.Img_editor.__orgin import *
+from pywidgets.tk.Img_editor.text_on_img import Text_putter as _Text_putter
+
 from pycv2.img.drawing.box import draw_box_moving
 from pycv2.img.textread import get_text_mask,get_img_string
 import numpy as np,cv2
+
 THETA=[-90,180,90]
 
 class _Crop_box(EMViwerer):
@@ -305,7 +306,6 @@ class selectregion(Viewer_brushed):
         self.box=box
     @staticmethod
     def __getrotateobject(the_img:Img_cv,rotation_type=cv2.ROTATE_90_CLOCKWISE):
-        
         h,w=the_img.imgcv.shape[:2]
         center=h//2,w//2
         for var in the_img.get_keys():
@@ -321,7 +321,7 @@ class selectregion(Viewer_brushed):
         
         the_img.box=get_rotated_box(the_img.box,THETA[rotation_type],center)
     def rotate_img(self,rotation_type=cv2.ROTATE_90_CLOCKWISE):
-        self.__getrotateobject(self,rotation_type)
+        return self.__getrotateobject(self,rotation_type)
         
 
 
@@ -488,6 +488,30 @@ class COLORING_Brush(Viewer_coloredbackground,Coloring_brsuh):
             self.show_viwers(False,mask=mask,coloerbackground=coloerbackground)
         self.target=show_viewer
         show_viewer(self.mask,self.coloerbackground)
-        
         self.bind_brush_coloring()
 
+class Text_putter(EMViwerer,_Text_putter):
+    def __init__(self, app, imgcv, mask=None, box=None,radius_selcting=5, **kwargs):
+        super().__init__(app, imgcv, mask, box, **kwargs)
+        _Text_putter.__init__(self,self.winfo_toplevel(),self.imgcv,self.mask,box=self.box,target=None)
+        self.radius_selcting=radius_selcting
+        self.viewers_add_text=[]
+    def text_mode(self,**kwargs):
+        self.remove_bind()
+        self.bind_text_viewers()
+        
+        def get_image(imgcv,mask):
+            the_dict={"imgcv":imgcv,"mask":mask}
+            for key,img in the_dict.items():
+                the_dict[key]=self.draw_img_box(img.copy(),**kwargs)
+            for viewer in self.viewers_add_text:
+                INR(viewer.define_image,**the_dict)
+        _Text_putter.__init__(self,self.winfo_toplevel(),self.imgcv,self.mask,box=self.box,target=get_image)
+        def end():
+            self.imgcv,self.mask=self._update_images()
+        get_image(self.imgcv,self.mask)
+        self.entered(end)
+        
+    def bind_text_viewers(self):
+        for viewer in self.viewers_add_text:
+            _Text_putter.bind(self,viewer.canvas)
