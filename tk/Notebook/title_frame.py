@@ -101,7 +101,8 @@ class Title_Frame_container(Frame,list):
             else:
                 print("there is no more slaves")
         else:
-            print([title.active for title in self])
+            return [title for title in self if title.active ][0]
+            
 
     def _remove_title(self,title:Title):
         title.grid_forget()

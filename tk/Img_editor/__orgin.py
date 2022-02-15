@@ -1,77 +1,35 @@
-import inspect
-
-from pathlib import Path
-from tkinter import *
-from pywidgets.tk.Notebook import CusNotebook
-import numpy as np
+from tkinter import Frame,NSEW
 from pycv2.img.utils import *
-from tkinter import filedialog
 from pykeyboard import keyboard
 from pykeyboard.keys import ENTER
-ALL_EXTENSIONS=(
-    ("ALL","*.*"),("PNG","*.png"),("JPEG",".jpg *.jpeg *.jp2"),("WEB","*.web"),
-    ("Portable image","*.pbm *.pgm *.ppm *.pxm *.pnm"),("Windows bitmaps","*.bmp *.dib")
-)
-def INR(funct,*args,**kwargs):
-    func_args = inspect.getargspec(funct).args
-    the_dic={}
-    for value in kwargs:
-        if value in func_args:
-            the_dic[value]=kwargs[value]
-    return funct(*args,**the_dic)
+from pywidgets._imgcv_objects.__origin import Img_cv,INR
+from pywidgets.tk.Notebook import CusNotebook
+import inspect
+class CustomActive_Notebook(CusNotebook):
+    def __init__(self, app, delet=True, extra=True, style={}, destyle={}, **kwargs):
+        super().__init__(app, delet, extra, style, destyle, **kwargs)
+        self.targets=[]
+    def _active(self, title=None):
+        super()._active(title)
+        for target in self.targets:
+            target()
 
-class Img_cv():
-    def __init__(self,imgcv,mask=None,box=None):
-        if imgcv is None:
-            raise "error in defining opencv image"
-        if mask is None:
-            mask = np.zeros(imgcv.shape[:2], dtype=np.uint8)
-        if box is None:
-            box = [0, 0, imgcv.shape[1], imgcv.shape[0]]
-        self.imgcv=imgcv
-        self.mask=mask
-        self.box=box
-    def __bool__(self):return True
-    def __getitem__(self, name: str):
-        return self.__dict__[name]
-    def __setitem__(self,k,v):
-        setattr(self,k,v)
-    def get_keys(self):
-        return{"imgcv":self.imgcv.copy(),"mask":self.mask.copy(),"box":self.box.copy()}
-    
-    def apppend(self,object):
-        return object
- 
-    def __eq__(self, o:np.ndarray):
-        return self.imgcv is o
-    def clamp_box(self,box):
-        return clamp_box(box,self.imgcv)
-    def clamp_points(self,points):
-            return clamp_points(points,self.imgcv)
-    
-    def clamp_point(self,pt):
-        return clamp_point(pt,self.imgcv)
-    def save_imgcv(self,**kwargs):
-        filename=filedialog.asksaveasfilename(
-            filetypes=ALL_EXTENSIONS,**kwargs
-        )
-        if filename!="":
-            cv2.imwrite(filename,self.imgcv)
-    
-class Img_editor(Frame,Img_cv):
-    def __init__(self,app,imgcv,mask=None,box=None,**kwargs):
-        dicttion={}
-        for value in inspect.getfullargspec(Frame.__init__).args:
-            if value in kwargs:
-                dicttion[value]=kwargs[value]
+class EMViwerer(Frame,Img_cv):
+    def __init__(self,app,imgcv,mask=None,points=None,**kwargs):
+        
         if not hasattr(self,"mainnotebook"):
-            Frame.__init__(self,app,**dicttion)
-            Img_cv.__init__(self,imgcv,mask,box)
-        self.zoomper=100
-        self.rowconfigure(0, weight=1)
-        self.columnconfigure(0, weight=1)
-        self.mainnotebook = CusNotebook(self)
-        self.mainnotebook.grid(row=0, column=0, sticky=NSEW)
+            func_args = inspect.getfullargspec(Frame.__init__).args
+            the_dic={}
+            for arg in func_args:
+                if arg in kwargs:
+                    the_dic[arg]=kwargs[arg]
+            super().__init__(app,**the_dic)
+            Img_cv.__init__(self,imgcv,mask=mask,points=points,)
+            self.zoomper=100
+            self.rowconfigure(0, weight=1)
+            self.columnconfigure(0, weight=1)
+            self.mainnotebook = CustomActive_Notebook(self)
+            self.mainnotebook.grid(row=0, column=0, sticky=NSEW)
         #for a cancel button
   
     def __getitem__(self, key: str) :
@@ -80,18 +38,12 @@ class Img_editor(Frame,Img_cv):
         else:
             Img_cv.__getitem__(self,key)   
     
-    def __setattr__(self, __name: str, __value):
-        if __name=="mainnotebook":
-            if not hasattr(self,__name):
-                return super().__setattr__(__name,__value)
-            else:
-                return super().__getattribute__(__name)
-        else:
-            super().__setattr__(__name,__value)
+
+    
     def _end_target(self,_=None):
         self.cancel()
         self.endtarget()
-    
+
     def entered(self, target):
         self.endtarget=target
         if keyboard.checknow(ENTER):
@@ -106,20 +58,17 @@ class Img_editor(Frame,Img_cv):
         self.unbind_all("<Return>")
         self.unbind_all("<KeyRelease-Return>")
         
-
-EXTENSIONS=[exten.split(".")[1] for _,root in ALL_EXTENSIONS for exten in root.split(" ")]
-class EMViwerer(Img_editor):
-    def __init__(self, app, imgcv, mask=None, box=None, **kwargs):
-        super().__init__(app, imgcv, mask=mask, box=box, **kwargs)
     def show_viwers(self,state=True,colorimgstate=True,**kwargs):
         for var in kwargs:
-            setattr(self,var,kwargs[var])
+            #imgcv jsut for viewing
+            if "imgcv"!=var:
+                setattr(self,var,kwargs[var])
         #putting circles automaticly
         the_dict=self.get_keys()
         #this is for coloring imgcv
         the_dict["colorimgstate"]=colorimgstate
-        if state and "circles" not in the_dict:
-            the_dict["circles"]=xywh_2_pts(self.box)
+        if state and "points" not in the_dict:
+            the_dict["points"]=self.points
             
         title=self.mainnotebook.actived_widget()
         if hasattr(title,"define_image"):

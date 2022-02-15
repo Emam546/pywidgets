@@ -1,5 +1,5 @@
 import cv2,numpy as np
-from pywidgets._functions.selecting import Select_box_circels
+from pywidgets._functions.selecting import Select_box_Points
 from tkinter import *
 from pycv2.PIL import TextDrawer
 from pycv2.img.utils import xywh_2_pts,distance
@@ -14,7 +14,7 @@ class Text_putter:
         text:str="",text_color=(255,255,255),font:ImageFont=None,spacing=4,direction=None,features=None,language=None,stroke_width=0,break_=False):
         #to avooid replacing in center state
         self.root=root
-        self.selecting_box=Select_box_circels(box, None, radius_selcting=radius_selcting, centerstate=False)
+        self.selecting_box=Select_box_Points(box, None, radius_selcting=radius_selcting, centerstate=False)
         self._textputter=_Text_getter(root,self._track,text)
         self.target=target
         self.text_color=text_color

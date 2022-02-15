@@ -1,5 +1,4 @@
 import cv2,os
-
 from pywidgets.tk.Img.__orign import *
 from pycv2.img.utils import *
 from pycv2.img.drawing.box import *
@@ -15,9 +14,17 @@ class __Croped_img(Img_with_scrollbar):
             Img_with_scrollbar.define_image(self,imgcv)
         else:
             Img_with_scrollbar.define_image(self,imgcv[b[1]:b[1]+b[3], b[0]:b[0]+b[2]])
+DEFULT_DRAWING_POINTS=dict(
+        color_line=(255,255,0),thickness=2,radius=2,
+        colors=[(0,0,255)]*4,center_state=False,colorcenter=(0,0,255))
 class DrawedImg(Img_with_scrollbar):
-    def draw_box_image(self,imgcv,circles=None):
-        super().define_image(draw_rotated_box_img(imgcv,circles))
+    def define_image(self,imgcv,points=None,**style_drawing_points):
+        if points!=None:
+            the_dict=DEFULT_DRAWING_POINTS.copy()
+            the_dict.update(style_drawing_points)
+            super().define_image(draw_box_moving(imgcv.copy(),points,**the_dict))
+        else:
+            super().define_image(imgcv)
 class Added_background_Img(Img_with_scrollbar):
     def define_image(self,imgcv,imported_backgrounds,mask=None):
         finalimg=imgcv.copy()
@@ -28,30 +35,29 @@ class Added_background_Img(Img_with_scrollbar):
         finalimg=add_back_ground(imgcv.copy(),mask,finalimg)
         super().define_image(finalimg)
 class Colored_Img(DrawedImg):
-    def define_image(self,imgcv,mask=None,coloerbackground=None,circles=None):
+    def define_image(self,imgcv,mask=None,coloerbackground=None,points=None,**style_drawing_points):
         if mask is None:mask=np.zeros(imgcv.shape[:2],"uint8")
         if coloerbackground is None:coloerbackground=np.zeros(imgcv.shape[:2],"uint8")
-        self.draw_box_image(add_back_ground(imgcv.copy(),mask, coloerbackground), circles)
+        super().define_image(add_back_ground(imgcv.copy(),mask, coloerbackground), points,**style_drawing_points)
 class Bluerd_img(Image_with_slider,DrawedImg):
-    def __init__(self, app=None, *args, **kwargs):
-        super().__init__(app=app, *args, **kwargs)
-    def define_image(self,imgcv,mask=None,circles=None,blured=0):
+    def define_image(self,imgcv,mask=None,points=None,blured=0,**style_drawing_points):
         mask=mask if not mask is None else np.ones(imgcv.shape[:2],"uint8")*255
         if blured!=0:
-            self.draw_box_image(bluring(imgcv.copy(), mask, blured), circles)
+            super().define_image(bluring(imgcv.copy(), mask, blured), points)
         else:
-            self.draw_box_image(imgcv, circles)
+            super().define_image(imgcv, points,**style_drawing_points)
 class Cutted_brush(Image_with_slider,DrawedImg):
-    def define_image(self, imgcv,mask=None,radiusarea=2,circles=None):
+    def define_image(self, imgcv,mask=None,radiusarea=2,points=None,**style_drawing_points):
         if mask is None:mask=np.zeros(self.shape[:2],"uint8")
         resultimg=cv2.inpaint(imgcv, mask, radiusarea, cv2.INPAINT_TELEA)
-        self.draw_box_image(resultimg,circles)
+        super().define_image(resultimg,points,**style_drawing_points)
 class Removed_Background(DrawedImg):
-     def define_image(self, imgcv,mask=None,circles=None):
+     def define_image(self, imgcv,mask=None,points=None,**style_drawing_points):
         if mask is None:mask=np.zeros(imgcv.shape[:2],"uint8")
         background=duplicate_image(REMOVEDBACKGROUND,imgcv.shape[:2])
-
-        self.draw_box_image(add_back_ground(imgcv.copy(),255-mask,background),circles)
+        if points!=None:
+            super().define_image(add_back_ground(imgcv.copy(),255-mask,background),points,**style_drawing_points)
+    
 class Croped_Img(__Croped_img):
     def define_image(self,imgcv,mask=None,box=None):
         if mask is None:
@@ -63,15 +69,15 @@ class Croped_mask(__Croped_img):
     def define_image(self,mask,box=None,):
         self.crop_Img(mask,box)
 class Mask(DrawedImg):
-    def define_image(self,mask,circles=None):
-        self.draw_box_image(mask,circles)
+    def define_image(self,mask,points=None,**style_drawing_points):
+        super().define_image(mask,points,**style_drawing_points)
 class Image_viewer(DrawedImg):
-    def define_image(self,imgcv,colorimgstate=False,mask=None,circles=None):
+    def define_image(self,imgcv,colorimgstate=False,mask=None,points=None,**style_drawing_points):
         if mask is None or not colorimgstate:
             colored_imgcv=imgcv
         else:
             colored_imgcv=color_back_ground(imgcv.copy(),mask,(255,255,255))
-        self.draw_box_image(colored_imgcv,circles)
+        super().define_image(colored_imgcv,points,**style_drawing_points)
 class ClusteringtheImage(Image_with_slider,DrawedImg):
     def __init__(self, app=None, *args, **kwargs):
         super().__init__(app=app, *args, **kwargs)
@@ -79,7 +85,7 @@ class ClusteringtheImage(Image_with_slider,DrawedImg):
         self.last_kmeans=None
         self.last_img=None
         self.last_clusterd_img=None
-    def define_image(self, imgcv,mask=None,kmeans=3,circles=None):
+    def define_image(self, imgcv,mask=None,kmeans=3,points=None,**style_drawing_points):
         mask=mask if not mask is None else np.zeros(imgcv.shape,"uint8")
         if kmeans!=self.last_kmeans or not ARE_EQUALE(self.last_img,imgcv):
             self.last_kmeans=kmeans
@@ -94,12 +100,12 @@ class ClusteringtheImage(Image_with_slider,DrawedImg):
             res = center[label.flatten()]
             self.last_clusterd_img=res.reshape((imgcv.shape))
         _background=add_back_ground(self.last_img.copy(),mask,self.last_clusterd_img)
-        self.draw_box_image(_background,circles)
+        super().define_image(_background,points,**style_drawing_points)
 class Gray_Image_viewer(DrawedImg):
-    def define_image(self, imgcv,mask=None,circles=None):
+    def define_image(self, imgcv,mask=None,points=None,**style_drawing_points):
         mask=mask if not mask is None else np.zeros(imgcv.shape,"uint8")
         #conver BGR 2 Gray and add 2 channels by cv2
         grayimg=cv2.cvtColor(cv2.cvtColor(imgcv,cv2.COLOR_BGR2GRAY),cv2.COLOR_GRAY2BGR)
         _background=add_back_ground(imgcv.copy(),mask,grayimg)
-        self.draw_box_image(_background,circles)
+        super().define_image(_background,points,**style_drawing_points)
         

@@ -18,7 +18,7 @@ class Canvas_cut(Canvas_cut) :
         canvas.bind("<Button-1>",lambda e: self.release())   
         canvas.bind("<ButtonRelease-1>",correct)
 
-class Control_boxNp(Control_boxNp):
+class Control_Points(Control_Points):
     def bind(self,canvas:Canvas):
         def correct(event,state):
             x,y = int(event.widget.canvasx(event.x)),int(event.widget.canvasy(event.y))

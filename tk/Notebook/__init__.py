@@ -36,7 +36,7 @@ class CusNotebook(Swithcher_window):
         self.frame_container=Frame(self)
         
         self.frame_title.rowconfigure(0,weight=1)
-        self.frame_title.grid(row=0,column=0,sticky=NSEW)
+        self.frame_title.grid(row=0,column=0,sticky=EW)
         self.frame_container.grid(row=1,column=0,sticky=NSEW)
         
 
@@ -46,7 +46,6 @@ class CusNotebook(Swithcher_window):
     def __bool__(self):
         return True
 
-    
     def _get_title(self,title,widget,**kwargs):
         return Title_Notebook(self.frame_title,title,widget,
             self.frame_title.delet,self.frame_title.style,self.frame_title.destyle,**kwargs)
@@ -77,14 +76,18 @@ class CusNotebook(Swithcher_window):
         if self.active_child!=title:
             if title not in self.frame_title.grid_slaves() and title is not None:
                 self._return_child(title)
-            if title not in self:
-                print("not in self")
             for child in self:
                 if child is title:
                     child.widget.pack(expand=YES,fill=BOTH)
                 else:
                     child.widget.pack_forget()
-            self.frame_title._active(title)
+            if title not in self:
+                print("not in self")
+                self.defult_window.config(height=400,width=400)
+                self.defult_window.pack(expand=YES,fill=BOTH)
+            else:
+                
+                self.frame_title._active(title)
         self.active_child=title
 
     def _return_child(self,title:Title_Notebook):

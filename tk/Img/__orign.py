@@ -14,6 +14,7 @@ class Img(Frame):
         self.rowconfigure(0,weight=1)
         self.canvas.grid(column=0,row=0,sticky=NSEW)
         self.zoom=zoom
+        #thsi is empty space that you would have
         self.plusnum=plusnumber
         self.difference=False
         self.imgtk=None
@@ -60,8 +61,9 @@ class Img(Frame):
         self.resized()
         
 class Img_with_scrollbar(Img):
-    def __init__(self,app=None,*args,**kwargs):
+    def __init__(self,app=None,adding_area=100,*args,**kwargs):
         super().__init__(app,*args,**kwargs)
+        self.adding_area=adding_area
         vscroll=self.vscroll=Scrollbar(self,command=self.canvas.yview)
         hscroll=self.hscroll=Scrollbar(self,orient=HORIZONTAL,command=self.canvas.xview)
         self.canvas.config(xscrollcommand=hscroll.set, yscrollcommand=vscroll.set)
@@ -69,14 +71,14 @@ class Img_with_scrollbar(Img):
         self.bind("<Configure>",lambda e:self.configuration())
     def configuration(self):
         if self.imgtk==None:return
-        w,h=self.imgtk.width()+100,self.imgtk.height()+100
+        w,h=self.imgtk.width()+self.adding_area,self.imgtk.height()+self.adding_area
         cw,ch=self.canvas.winfo_width(),self.canvas.winfo_height()
-        if w>cw :
-            if self.hscroll.winfo_ismapped()!=1:
+        if w>=cw :
+            if not self.hscroll.winfo_ismapped():
                 self.hscroll.grid(column=0,row=1,sticky="sew",columnspan=2)
         else:self.hscroll.grid_forget()
-        if h>ch :
-            if self.vscroll.winfo_ismapped()!=1:
+        if h>=ch :
+            if not self.vscroll.winfo_ismapped():
                 self.vscroll.grid(column=1,row=0,sticky=NSEW)
         else:self.vscroll.grid_forget() 
     def resized(self):

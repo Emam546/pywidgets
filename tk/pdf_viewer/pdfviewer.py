@@ -1,9 +1,80 @@
 from tkinter import *
+from typing import Dict,AnyStr,List
 from pycv2.img.conv_pdf import convert_pdf_to_image
 import PyPDF2,threading,numpy as np,cv2
 from PIL import ImageTk,Image
 from pycv2.img.utils import *
-
+class PDF_Viewer(Frame):
+    def __init__(self,app,dpi=200,padpagey=0,color=(255,255,255),radius=10,plusnumpage=4,*args, **kwargs):
+        self.dpi=dpi
+        self.zoomper=100
+        self.padpagey=padpagey
+        self.plusnumpage=plusnumpage
+        self.num_pages=0
+        self.canvas=Canvas(self,bg=self["bg"],scrollregion=(0,0,1000,1000),)
+        vscroll=self.vscroll=Scrollbar(self,command=self.canvas.yview)
+        hscroll=Scrollbar(self,orient=HORIZONTAL,command=self.canvas.xview)
+        self.canvas.config(
+            xscrollcommand=hscroll.set,
+            yscrollcommand=self.scroll_bar_getter
+            )
+        self.columnconfigure(0,weight=1)
+        self.rowconfigure(0,weight=1)
+        self.canvas.bind_all("<MouseWheel>",self. _on_mousewheel)
+        self.canvas.grid(column=0,row=0,sticky=NSEW)
+        vscroll.grid(column=1,row=0,sticky=NSEW)
+        hscroll.grid(column=0,row=1,sticky=NSEW)
+        self.imgtk:Dict[AnyStr,Image]={}
+    def _on_mousewheel(self,event):
+        self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+    def scroll_bar_getter(self,x0,x1):
+        if self.num_pages!=0:
+            self.vscroll.set(x0,x1)
+            self.geting_scrolled()
+    def geting_scrolled(self,):
+            page=int(self.vscroll.get()[1]*self.num_pages) 
+            #height=float(self.canvas["scrollregion"].split(" ")[3])+self.plusnumpage
+            #ridm=self.canvas.winfo_height()
+            #num=int(((ridm*self.num_pages)/height)/2)+4
+            minpage,maxpage=max(0,page-4),min(page+4,self.num_pages)
+            the_numbers=list(range(minpage, maxpage))
+            threading.Thread(
+                target=lambda:self.define_image(the_numbers)
+            ).start()
+    def put_page(self,page):
+        width=int((self.canvas.winfo_width()*self.zoomper)/100)
+        if self.imgtk[str(page)][0]!=None \
+                and  self.imgtk[str(page)][0].width()==width:return
+        self._putpage(page)
+    def _putpage(self,page):
+        width=int((self.canvas.winfo_width()*self.zoomper)/100)
+        img=self.imgtk[str(page)][1]
+        w,h=img.size
+        r = width / float(w)
+        dim = [width, int(h * r)]
+        resizedimg=img.resize(dim)
+        self.imgtk[str(page)][0]=ImageTk.PhotoImage(image=resizedimg) 
+        padding_width=int((self.canvas.winfo_width()-width)/2)
+        padding_width=max(0,padding_width)
+        #self.canvas.update()
+        self.canvas.create_image(
+            padding_width,((dim[1]*page)+self.padpagey),
+            image=self.imgtk[str(page)][0],anchor=NW
+        )
+        self.canvas.update()
+        
+    def define_image(self,pages):
+        if self.canvas.winfo_ismapped()!=1:return
+        for page in pages:
+            if not str(page) in self.imgtk:
+                self.imgtk[str(page)]=None
+                img=convert_pdf_to_image(self.filename,page,page+1,self.dpi)[0]
+                img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+                img=Image.fromarray(img.copy())
+                self.imgtk[str(page)] = img
+            if self.canvas.winfo_ismapped()!=1:break
+            if self.imgtk[str(page)] !=None:
+                self.put_page(page)
 class ImgViewerPdf(Frame):         
     def __init__(self,app,dpi=200,padpagey=0,color=(255,255,255),radius=10,plusnumpage=4,*args, **kwargs):
         super().__init__(app, *args, **kwargs)

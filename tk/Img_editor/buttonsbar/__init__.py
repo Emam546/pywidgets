@@ -42,7 +42,7 @@ class frame_poped_up(Frame):
         self.place(anchor=NW,x=x,y=y)
 
 class buttonpoped(frame_poped_up):
-    def __init__(self,app,*args,**kwargs):
+    def __init__(self,app:Widget,*args,**kwargs):
         self.button=b=Label(app,*args,**kwargs)
         super().__init__(app.winfo_toplevel(),bg=b["bg"])
         def check(event):
