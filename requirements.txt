@@ -1,0 +1,5 @@
+cv-imutils
+pykeyboard-input
+langdetect
+gTTS
+pyperclip
